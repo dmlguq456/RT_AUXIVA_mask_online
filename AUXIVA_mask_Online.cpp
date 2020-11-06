@@ -927,10 +927,12 @@ void AUXIVA_MASK::AUXIVA_MASK_lemma(double** input, int frameInd, double** outpu
 			Ybuff[ch1][i] = Ytmp[ch1][i] * win_STFT[i];
 		}
 	}
-
-	for (i = 0; i < BufferSize; i++)
+	for (ch = 0; ch < Nch; ch++)
 	{
-		output[0][i] = Ybuff[0][i];
+		for (i = 0; i < BufferSize; i++)
+		{
+			output[ch][i] = Ybuff[ch][i];
+		}
 	}
 }
 

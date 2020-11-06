@@ -137,23 +137,26 @@ void Keyboard_interrupt()
 {
 	while (true)
 	{
+		SLEEP(50);
 		if (GetKeyState('S') < 0 && !fF4) // Stop
 		{
 			fF4 = true;
+			SLEEP(100);
 			if (MAKE_FILE == 1) std::cout << "... Recording and Processing have stopped" << std::endl;
 		}
 		if (GetKeyState('A') < 0 && !fF5) // Begin
 		{
 			fF5 = true;
+			SLEEP(100);
 			if (MAKE_FILE == 1) std::cout << "... Recording and Processing has begun" << std::endl;
 		}
 		if (GetKeyState('D') < 0 && !fF6) // Quit
 		{
 			fF6 = true;
+			SLEEP(100);
 			if (MAKE_FILE == 1) std::cout << "... Program will be closed" << std::endl;
 			return;
 		}
-		SLEEP(50);
 	}
 }
 
@@ -166,6 +169,7 @@ int main(void)
 	{
 		while (true)
 		{
+			SLEEP(50);
 			if (fF5 == true)
 			{
 				SLEEP(200);
@@ -326,7 +330,7 @@ int main(void)
 			}
 			if (fF4 == true || fF6 == true)
 			{
-				SLEEP(200);
+				SLEEP(100);
 				fF4 = false;
 				break;
 			}
@@ -347,7 +351,7 @@ int main(void)
 		delete data.out_buffer;
 		if (fF6 == true)
 		{
-			SLEEP(200);
+			SLEEP(100);
 			t1.join();
 			return 0;
 		}
