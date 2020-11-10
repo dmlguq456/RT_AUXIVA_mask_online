@@ -116,7 +116,7 @@ void CDR::CDR_mask(double **input, int frame_idx, double *Mask, double **mic_arr
 	int re, im;
 	int Npair = Nch * (Nch - 1) / 2;
 	double lambda = 0.5;
-	int kappa = 10;
+	int kappa = 20;
 	double threshold = 0.2;
 	double mic_dist;
 

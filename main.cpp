@@ -316,7 +316,9 @@ int main(void)
 					{
 						for (i = 0; i < 3 * bufferFrames; i++)
 						{
-							data.out_buffer[channels * i + ch + out_buffer_cnt] = (MY_TYPE)proc_output[ch][i]; //input자료형에 맞게 변환하여 저장
+							data.out_buffer[channels * (3 * i) + ch + out_buffer_cnt] = (MY_TYPE)(proc_output[ch][i] * 32768.0); //input자료형에 맞게 변환하여 저장
+							data.out_buffer[channels * (3 * i + 1) + ch + out_buffer_cnt] = (MY_TYPE)(proc_output[ch][i] * 32768.0); //input자료형에 맞게 변환하여 저장
+							data.out_buffer[channels * (3 * i + 2) + ch + out_buffer_cnt] = (MY_TYPE)(proc_output[ch][i] * 32768.0); //input자료형에 맞게 변환하여 저장
 						}
 					}
 					out_buffer_cnt += 3 * bufferFrames * channels;

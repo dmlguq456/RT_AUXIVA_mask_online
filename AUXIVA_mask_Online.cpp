@@ -16,9 +16,9 @@ AUXIVA_MASK::AUXIVA_MASK()
 	//epsi = 0.000001;
 	epsi = 2.220446049250313 * 1E-16;
 	eps_floor = 1e-3;
-	f_alpha = 0.5;
+	f_alpha = 0.9;
 	gamma_t = 0.3;
-	gamma_n = 0.8;
+	gamma_n = 0.9;
 	gamma = new double[Nch];
 	eta = new double *[Nch];
 	for (i = 0; i < Nch; i++)
@@ -628,6 +628,10 @@ void AUXIVA_MASK::AUXIVA_MASK_lemma(double** input, int frameInd, double** outpu
 		if (Mask[k] < 1e-2)
 		{
 			Mask[k] = 1e-2;
+		}
+		if (Mask[k] > (1-1e-2))
+		{
+			Mask[k] = 1 - 1e-2;
 		}
 		//  p with Variances by Mask
 		if (frameInd == 3)
