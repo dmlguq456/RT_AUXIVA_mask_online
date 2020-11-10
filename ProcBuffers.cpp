@@ -208,7 +208,6 @@ ProcBuffers::~ProcBuffers()
 	char file_name1[2][500];
 	time_t t = time(NULL);
 	struct tm tm = *localtime(&t);
-	char file_name_time[500];
 	
 
 	for (ch = 0; ch < ch_save; ch++)
