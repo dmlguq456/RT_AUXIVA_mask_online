@@ -16,7 +16,7 @@ AUXIVA_MASK::AUXIVA_MASK()
 	//epsi = 0.000001;
 	epsi = 2.220446049250313 * 1E-16;
 	eps_floor = 1e-3;
-	f_alpha = 0.9;
+	f_alpha = 0.98;
 	gamma_t = 0.3;
 	gamma_n = 0.9;
 	gamma = new double[Nch];
@@ -472,13 +472,12 @@ AUXIVA_MASK::~AUXIVA_MASK()
 
 void AUXIVA_MASK::AUXIVA_MASK_lemma(double** input, int frameInd, double** output, double *Mask)
 {
-	if (frameInd == 10)
-	{
-		f_alpha = 0.9;
-	}
+	
+	double f_alpha_real = f_alpha;
+	f_alpha = 0.94;
 	if (frameInd == 50)
 	{
-		f_alpha = 0.98;
+		f_alpha = f_alpha_real;
 	}
 	int i, j, k, ch, freq, freqInd;
 	int ch1, ch2;
