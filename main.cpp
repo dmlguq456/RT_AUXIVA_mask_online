@@ -311,7 +311,7 @@ int main(void)
 					}
 					for (ch = 0; ch < channels; ch++)
 					{
-						for (i = 0; i < 3 * bufferFrames; i++)
+						for (i = 0; i < bufferFrames; i++)
 						{
 							data.out_buffer[channels * (3 * i) + ch + out_buffer_cnt] = (MY_TYPE)(proc_output[ch][i] * 32768.0); //input자료형에 맞게 변환하여 저장
 							data.out_buffer[channels * (3 * i + 1) + ch + out_buffer_cnt] = (MY_TYPE)(proc_output[ch][i] * 32768.0); //input자료형에 맞게 변환하여 저장
