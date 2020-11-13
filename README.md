@@ -3,7 +3,7 @@
 
 # Target Speech Extraction
 
-서강대 전자공학과 박현민 교수님 연구실에서 제작한 octa capture microphone을 사용한 실시간 입출력 처리 모듈이며, 타겟 화자가 배경 잡음 속에서 발화하는 다채널 음원 신호를 입력으로 해당 알고리즘이 예측하여 잡음이 억제된 타겟 화자 추출 결과를 실시간 line-out 출력 및 std out 혹은 wav파일을 반환 합니다.
+서강대 전자공학과 박민 교수님 연구실에서 제작한 octa capture microphone을 사용한 실시간 입출력 처리 모듈이며, 타겟 화자가 배경 잡음 속에서 발화하는 다채널 음원 신호를 입력으로 해당 알고리즘이 예측하여 잡음이 억제된 타겟 화자 추출 결과를 실시간 line-out 출력 및 std out 혹은 wav파일을 반환 합니다.
 
 ## **독립성분분석 (Independent Vector Analysis, IVA)**
 
