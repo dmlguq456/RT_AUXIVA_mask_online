@@ -80,7 +80,7 @@ wav 저장 시에, 출력 결과는 output 폴더 내부에 저장됩니다. **o
 - 처리 프로그램의 중단을 위해서는 키보드에 s키를 누릅니다.
 - 처리 프로그램의 종료를 위해서는 키보드의 d키를 누릅니다.
 
-![RT_AuxIVA_mask_Online%20da8771b68ece42899c52ea6b246c22a4/Untitled.png](RT_AuxIVA_mask_Online%20da8771b68ece42899c52ea6b246c22a4/Untitled.png)
+![Screenshot](Sample_Spec/Untitled.png)
 
 만약 wav저장 옵션으로 실행하였다면, 위와 같이 처리 중임을 안내하는 문구가 출력됩니다.
 
@@ -88,4 +88,4 @@ wav 저장 시에, 출력 결과는 output 폴더 내부에 저장됩니다. **o
 
 3채널, 마이크 간격 20cm, 
 
-![RT_AuxIVA_mask_Online%20da8771b68ece42899c52ea6b246c22a4/Untitled%201.png](RT_AuxIVA_mask_Online%20da8771b68ece42899c52ea6b246c22a4/Untitled%201.png)
+![Spec](RT_AuxIVA_mask_Online%20da8771b68ece42899c52ea6b246c22a4/Untitled%201.png)
