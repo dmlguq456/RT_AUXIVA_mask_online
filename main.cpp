@@ -80,10 +80,10 @@ struct InputData {
 
 
 // 실시간으로 MIC로 들어온 입력을 버퍼에 저장하고 저장한 데이터를 processing에서 처리한 후 실시간으로 출력한다.
-int inout(void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
-	double /*streamTime*/, RtAudioStreamStatus status, void *data)
+int inout(void* outputBuffer, void* inputBuffer, unsigned int nBufferFrames,
+	double /*streamTime*/, RtAudioStreamStatus status, void* data)
 {
-	InputData *iData = (InputData *)data;
+	InputData* iData = (InputData*)data;
 
 	////실시간으로 입력을 받는 부분
 	unsigned int frames = nBufferFrames;
@@ -141,17 +141,14 @@ void Keyboard_interrupt()
 		if (GetKeyState('S') < 0 && !fF4) // Stop
 		{
 			fF4 = true;
-			if (MAKE_FILE == 1) std::cout << "... Recording and Processing have stopped" << std::endl;
 		}
 		if (GetKeyState('A') < 0 && !fF5) // Begin
 		{
 			fF5 = true;
-			if (MAKE_FILE == 1) std::cout << "... Recording and Processing has begun" << std::endl;
 		}
 		if (GetKeyState('D') < 0 && !fF6) // Quit
 		{
 			fF6 = true;
-			if (MAKE_FILE == 1) std::cout << "... Program will be closed" << std::endl;
 			return;
 		}
 	}
@@ -171,6 +168,13 @@ int main(void)
 			{
 				SLEEP(200);
 				fF5 = false;
+				fF4 = false;
+				if (MAKE_FILE == 1) std::cout << "... Recording and Processing has begun" << std::endl;
+				break;
+			}
+			if (fF4 == true)
+			{
+				fF4 = false;
 				break;
 			}
 			if (fF6 == true)
@@ -331,6 +335,9 @@ int main(void)
 			{
 				SLEEP(100);
 				fF4 = false;
+				fF5 = false;
+				if (MAKE_FILE == 1) std::cout << "... Recording and Processing have stopped" << std::endl;
+
 				break;
 			}
 		}
@@ -344,7 +351,7 @@ int main(void)
 
 	cleanup:
 		if (adac.isStreamOpen()) adac.closeStream();
-	
+
 
 		delete data.in_buffer;
 		delete data.out_buffer;
@@ -352,6 +359,7 @@ int main(void)
 		{
 			SLEEP(100);
 			t1.join();
+			if (MAKE_FILE == 1) std::cout << "... Program will be closed" << std::endl;
 			return 0;
 		}
 	}
