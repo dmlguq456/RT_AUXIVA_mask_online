@@ -175,7 +175,6 @@ int main(void)
 			if (fF4 == true)
 			{
 				fF4 = false;
-				break;
 			}
 			if (fF6 == true)
 			{
@@ -337,7 +336,6 @@ int main(void)
 				fF4 = false;
 				fF5 = false;
 				if (MAKE_FILE == 1) std::cout << "... Recording and Processing have stopped" << std::endl;
-
 				break;
 			}
 		}
