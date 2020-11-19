@@ -34,8 +34,10 @@ double** mic_array;
 
 int ch_save;
 
+int BuffCnt , isNew16k;
 ProcBuffers::ProcBuffers()
 {
+	BuffCnt = 0, isNew16k = 0;
 	if (SAVE_OPT == 1) ch_save = 1;
 	else if (SAVE_OPT == 2) ch_save = Nch;
 
@@ -71,7 +73,6 @@ ProcBuffers::ProcBuffers()
 
 
 	input_temp = new double*[Nch];
-	output = new double*[Nch];
 	out_buff = new double*[Nch];
 	IVA_out = new short*[Nch];
 
@@ -82,7 +83,6 @@ ProcBuffers::ProcBuffers()
 	for (ch = 0; ch < Nch; ch++)
 	{
 		input_temp[ch] = new double[nWin];
-		output[ch] = new double[BufferSize];
 		out_buff[ch] = new double[BufferSize];
 		IVA_out[ch] = new short[BufferSize];
 
@@ -186,19 +186,18 @@ ProcBuffers::~ProcBuffers()
 	for (ch = 0; ch < Nch; ch++)
 	{
 		delete[] input_temp[ch];
-		delete[] output[ch];
 		delete[] out_buff[ch];
 		delete[] IVA_out[ch];
 
 		delete[] in_buff[ch];
 		delete[] origin_out[ch];
 		delete[] input[ch];
+		delete[] mic_array[ch];
 	}
 	delete[] input_temp;
-	delete[] output;
 	delete[] out_buff;
 	delete[] IVA_out;
-
+	delete[] mic_array;
 	delete[] in_buff;
 	delete[] origin_out;
 	delete[] input;
@@ -243,12 +242,13 @@ ProcBuffers::~ProcBuffers()
 #endif
 
 	delete iip_AUX;
+	delete iip_CDR;
 }
 
 int ProcBuffers::Process(double **input, int Nframe, double **output)
 {
 	int i, j, ch;
-	static int BuffCnt = 0, isNew16k = 0;
+	//static int BuffCnt = 0, isNew16k = 0;
 	//OCTA-Capture로 들어오는 input 48k이므로 process를 진행하기 위해 16k로 Down Sampling을 해야한다.
 	isNew16k = (BuffCnt == 2);
 	for (ch = 0; ch < Nch; ch++)
