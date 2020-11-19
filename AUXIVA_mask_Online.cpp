@@ -18,7 +18,7 @@ AUXIVA_MASK::AUXIVA_MASK()
 	eps_floor = 1e-3;
 	f_alpha = 0.98;
 	gamma_t = 0.3;
-	gamma_n = 0.9;
+	gamma_n = 0.8;
 	gamma = new double[Nch];
 	eta = new double *[Nch];
 	for (i = 0; i < Nch; i++)
@@ -474,7 +474,7 @@ void AUXIVA_MASK::AUXIVA_MASK_lemma(double** input, int frameInd, double** outpu
 {
 	
 	double f_alpha_real = f_alpha;
-	f_alpha = 0.94;
+	f_alpha = 0.98;
 	if (frameInd == 50)
 	{
 		f_alpha = f_alpha_real;
