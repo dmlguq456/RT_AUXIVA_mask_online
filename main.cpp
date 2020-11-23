@@ -17,6 +17,7 @@ input directly through to the output.
 #include "header.h"
 #include "ProcBuffers.h"
 #include <thread>
+#include <atomic>
 
 /*
 typedef char MY_TYPE;
@@ -27,12 +28,14 @@ typedef char MY_TYPE;
 typedef signed short MY_TYPE;
 #define FORMAT RTAUDIO_SINT16
 
-int record_num = 0;
-int copyend = 0;
+std::atomic<int> record_num;
+std::atomic<int> copyend;
 int start = 2;
 bool fF4 = false;
 bool fF5 = false;
 bool fF6 = false;
+bool fF7 = false;
+bool continue_flag = false;
 
 /*
 typedef S24 MY_TYPE;
@@ -67,6 +70,7 @@ void usage(void) {
 	exit(0);
 }
 
+
 struct InputData {
 	MY_TYPE* in_buffer;
 	MY_TYPE* out_buffer;
@@ -97,18 +101,18 @@ int inout(void* outputBuffer, void* inputBuffer, unsigned int nBufferFrames,
 	//저장된 버퍼가 존재하면 이를 process하기 위해 복사하며 처리할 데이터가 존재한다고 record_num으로 확인한다.
 	memcpy(iData->in_buffer + in_offset, inputBuffer, iData->bufferBytes);
 	iData->iframeCounter += frames;
-	record_num++;
+	record_num.fetch_add(1);
 
 	//저장된 데이터가 최대 버퍼사이즈를 넘기면 다시 offset을 0으로 하여 overwriting한다.
 	//이미 앞의 데이터는 process를 위해 복사되었다.
 	if (iData->iframeCounter >= iData->totalFrames)
 	{
-		return 2; //현재 시간(32초)이 다 되면 프로그램을 멈추도록 데모하였다.
+		//return 2; //현재 시간(32초)이 다 되면 프로그램을 멈추도록 데모하였다.
 		iData->iframeCounter = 0;
 	}
 
 	//process에서 처리된 데이터가 실시간 출력을 위해 처리 후 발생하는 copyend라는 신호가 뜨면 callback함수의 output으로 복사한다.
-	if (copyend)
+	if (copyend.load())
 	{
 		if (iData->oframeCounter + nBufferFrames > iData->totalFrames)
 		{
@@ -119,14 +123,14 @@ int inout(void* outputBuffer, void* inputBuffer, unsigned int nBufferFrames,
 		memcpy(outputBuffer, iData->out_buffer + out_offset, iData->bufferBytes);
 		iData->oframeCounter += frames;
 		//처리된 데이터가 출력되면 copyend값을 줄인다.
-		copyend--;
+		copyend.fetch_sub(1);
 		if (iData->oframeCounter >= iData->totalFrames)
 		{
 			iData->oframeCounter = 0;
 		}
 	}
 	//처리된 데이터가 없으면 (발화구간이 없는경우) 0을 출력한다.
-	else if (copyend == 0)
+	else if (copyend.load() == 0)
 	{
 		memcpy(outputBuffer, iData->z_buffer, iData->bufferBytes);
 	}
@@ -151,48 +155,64 @@ void Keyboard_interrupt()
 			fF6 = true;
 			return;
 		}
+		if (GetKeyState('F') < 0 && !fF7) // Quit
+		{
+			fF7 = true;
+		}
 	}
 }
 
 int main(void)
 {
-
 	double time = 2048;
+
+
+	
 	std::thread t1(Keyboard_interrupt);
 	while (true)
 	{
-		while (true)
-		{
-			SLEEP(50);
-			if (fF5 == true)
+			while (true)
 			{
-				SLEEP(200);
-				fF5 = false;
-				fF4 = false;
-				if (MAKE_FILE == 1) std::cout << "... Recording and Processing has begun" << std::endl;
-				break;
+				SLEEP(50);
+				if (fF5 == true)
+				{
+					SLEEP(200);
+					fF5 = false;
+					fF4 = false;
+					if (MAKE_FILE == 1) std::cout << "... Recording and Processing has begun" << std::endl;
+					break;
+				}
+				if (fF4 == true)
+				{
+					fF4 = false;
+				}
+				if (fF7 == true)
+				{
+					fF7 = false;
+				}
+				if (fF6 == true)
+				{
+					SLEEP(200);
+					fF6 = false;
+					t1.join();
+					return 0;
+				}
+				if (continue_flag == true)
+				{
+					SLEEP(100);
+					continue_flag = false;
+					break;
+				}
 			}
-			if (fF4 == true)
-			{
-				fF4 = false;
-			}
-			if (fF6 == true)
-			{
-				SLEEP(200);
-				fF6 = false;
-				t1.join();
-				return 0;
-			}
-		}
 
-		record_num = 0;
-		copyend = 0;
+		record_num.store(0);;
+		copyend.store(0);
 		int in_buffer_cnt = 0;
 		int out_buffer_cnt = 0;
-		int i, j, ch;
+		int j;
 		int proc_end = 0;
 		int proc_count = 0;
-		unsigned int channels, fs, bufferBytes, oDevice = 0, iDevice = 0, iOffset = 0, oOffset = 0;
+		unsigned int ch, i, channels, fs, oDevice = 0, iDevice = 0, iOffset = 0, oOffset = 0;
 
 		double** input, ** proc_output;
 
@@ -266,7 +286,7 @@ int main(void)
 		data.z_buffer = new MY_TYPE[BufferSize * channels];
 		for (i = 0; i < BufferSize * channels; i++)
 		{
-			data.z_buffer[i] = 0.0;
+			data.z_buffer[i] = 0;
 		}
 
 		if (data.in_buffer == 0 || data.out_buffer == 0) {
@@ -287,12 +307,9 @@ int main(void)
 		//streaming이 돌면서 앞의 callback(inout)함수에서 
 		while (adac.isStreamRunning())
 		{
-			if (record_num)
+			if (record_num.load())
 			{
-				if (in_buffer_cnt >= fs * time * channels)
-				{
-					in_buffer_cnt = 0;
-				}
+
 				for (ch = 0; ch < channels; ch++)
 				{
 					for (i = 0; i < bufferFrames; i++)
@@ -300,18 +317,29 @@ int main(void)
 						input[ch][i] = (data.in_buffer[channels * i + ch + in_buffer_cnt]) / 32768.0; //input자료형에 맞게 변환하여 저장
 					}
 				}
+
+				double input_sum = 0;
+				for (i = 0; i < 100; i++)
+				{
+					input_sum += input[0][i];
+				}
+				//if (input_sum == 0 && proc_count > 50)
+				//{
+				//	SLEEP(100);
+				//	continue_flag = true;
+				//	fF7 = false;
+				//	if (MAKE_FILE == 1) std::cout << "... Recording and Processing will be restarting" << std::endl;
+				//	break;
+				//}
+
 				in_buffer_cnt += bufferFrames * channels;
 				proc_count++;
 				//Process에서 발화구간에서는 proc_end에 1을 return한다. 발화구간이 아니면 0을 return한다.
 				proc_end = proc->Process(input, proc_count, proc_output);
 
-				//발화구간에서 처리된 데이터에 대해 출력을 위해 callback함수의 outbuffer에 넣어준다.
+				//발화구간에서 처리된 데이터에 대해 출력sd을 위해 callback함수의 outbuffer에 넣어준다.
 				if (proc_end == 1)
 				{
-					if (out_buffer_cnt >= fs * time * channels)
-					{
-						out_buffer_cnt = 0;
-					}
 					for (ch = 0; ch < channels; ch++)
 					{
 						for (i = 0; i < bufferFrames; i++)
@@ -322,17 +350,18 @@ int main(void)
 						}
 					}
 					out_buffer_cnt += 3 * bufferFrames * channels;
-					copyend += 3;
+					copyend.fetch_add(3);
 				}
-				record_num--;
+				record_num.fetch_sub(1);
 			}
 			else
 			{
-				SLEEP(4);
+				SLEEP(16);
 			}
 			if (fF4 == true || fF6 == true)
 			{
 				SLEEP(100);
+				continue_flag = false;
 				fF4 = false;
 				fF5 = false;
 				if (MAKE_FILE == 1) std::cout << "... Recording and Processing have stopped" << std::endl;
