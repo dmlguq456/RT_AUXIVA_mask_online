@@ -18,26 +18,11 @@ FILE** IN;
 #endif
 
 //For downsampling (48k to 16k)
-double **InitCond, *XX_LP, *XX, **xx_lp, **x;
 
-double **out_buff;
-short **IVA_out;
-double **input_temp;
-double **output;
-
-double** in_buff;
-short** origin_out;
-double** input;
-
-double* Mask;
-double** mic_array;
-
-int ch_save;
-
-int BuffCnt , isNew16k;
 ProcBuffers::ProcBuffers()
 {
-	BuffCnt = 0, isNew16k = 0;
+	BuffCnt = 0;
+	isNew16k = 0;
 	if (SAVE_OPT == 1) ch_save = 1;
 	else if (SAVE_OPT == 2) ch_save = Nch;
 

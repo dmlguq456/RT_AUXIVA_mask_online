@@ -4,10 +4,26 @@
 class ProcBuffers
 {
 private:
-	
+	int ch_save;
+	int BuffCnt;
+	int isNew16k;
+	double** InitCond, * XX_LP, * XX, ** xx_lp, ** x;
+
+	double** out_buff;
+	short** IVA_out;
+	double** input_temp;
+	double** output;
+
+	double** in_buff;
+	short** origin_out;
+	double** input;
+
+	double* Mask;
+	double** mic_array;
+
 
 public:
 	ProcBuffers();
 	~ProcBuffers();
-	static int Process(double **input, int Nframe, double **output);
+	int Process(double **input, int Nframe, double **output);
 };
