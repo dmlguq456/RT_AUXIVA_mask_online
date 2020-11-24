@@ -205,7 +205,7 @@ int main(void)
 				}
 			}
 
-		record_num.store(0);;
+		record_num.store(0);
 		copyend.store(0);
 		int in_buffer_cnt = 0;
 		int out_buffer_cnt = 0;
@@ -318,11 +318,11 @@ int main(void)
 					}
 				}
 
-				double input_sum = 0;
-				for (i = 0; i < 100; i++)
-				{
-					input_sum += input[0][i];
-				}
+				//double input_sum = 0;
+				//for (i = 0; i < 100; i++)
+				//{
+				//	input_sum += input[0][i];
+				//}
 				//if (input_sum == 0 && proc_count > 50)
 				//{
 				//	SLEEP(100);
